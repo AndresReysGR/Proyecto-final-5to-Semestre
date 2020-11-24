@@ -4,16 +4,16 @@ ventana = Tk()
 ventana.title("Audio")
 ventana.geometry("800x600")
 
-etiqueta = Label(ventana, text="Esto es un label")
-etiqueta.pack()
+#etiqueta = Label(ventana, text="Esto es un label")
+#etiqueta.pack()
 
-segundaEtiqueta = Label(ventana, text="Segunda Etiqueta")
+segundaEtiqueta = Label(ventana, text="Audio")
 segundaEtiqueta.pack()
 
-ingresoTexto = Entry(ventana)
-ingresoTexto.pack()
+#ingresoTexto = Entry(ventana)
+#ingresoTexto.pack()
 
-boton = Button(ventana, text="Texto del boton")
+boton = Button(ventana, text="Iniciar")
 boton.pack()
 
 
