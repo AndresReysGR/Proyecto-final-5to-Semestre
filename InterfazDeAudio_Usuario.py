@@ -1,7 +1,7 @@
+from tkinter import *
 import pyaudio 
 import numpy as np
 import wave
-from tkinter import *
 
 
 ventana = Tk()
@@ -28,14 +28,12 @@ SEGUNDOS_GRABACION = 1
 #Tamaño de CHUNK
 CHUNK = 2048
 
-cuerda1=StringVar()
-frecuenciaDominante=StringVar()
-afinar1=StringVar()
-
 window = np.blackman(CHUNK)
 
 
-
+cuerda=StringVar()
+frecuencia=StringVar()
+afinar=StringVar()
 
 
 
@@ -58,18 +56,17 @@ def iniciar():
         y0,y1,y2 = np.log(fftData[indiceFrecuenciaDominate-1: indiceFrecuenciaDominate+2])
         x1 = (y2 - y0) * 0.5 / (2 * y1 - y2 - y0)
         fDominante = (indiceFrecuenciaDominate+x1)*FRECUENCIAS_MUESTREO/CHUNK
-        
+
         print("Frecuencia dominante: " + str(fDominante)+ "Hz", end='\r') 
         
-    
 
 
-        tolerancia=13
+        tolerancia=15
         rango = 1.3
         
 
         if fDominante > 82.4 - tolerancia and fDominante < 82.4 + tolerancia:
-            cuerda = "6ta cuerda tono Mi(e) con una frecuencia de 82.40Hz"
+            cuerda= "6ta cuerda tono Mi(e) con una frecuencia de 82.40Hz"
             if fDominante > 82.4 - rango and fDominante < 82.4 + rango:
                 afinar = "La afinacion es correcta"
             elif fDominante < 82.4 + rango:
@@ -126,9 +123,7 @@ def iniciar():
             cuerda = "no se escucha correctamente"
             
         
-        cuerda1.set(cuerda)
-        afinar1.set(afinar)
-        frecuenciaDominante.set(fDominante)
+        
     
        
     if __name__ == "__main__":
@@ -146,17 +141,19 @@ def iniciar():
 
 
 
-   
+    cuerda.set=(cuerda)
+    frecuencia.set=(frecuencia)
+    afinar.set=(afinar)
 
 
-cuerdaEtiqueta = Label(ventana, textvariable=cuerda1)
-cuerdaEtiqueta.pack()
-frecuenciaEtiqueta = Label(ventana, text="frecuencia actual")
-frecuenciaEtiqueta.pack()
-frecEtiqueta = Label(ventana, textvariable=frecuenciaDominante)
-frecEtiqueta.pack()
-afinarEtiqueta = Label(ventana, textvariable=afinar1)
-afinarEtiqueta.pack()
+    cuerdaEtiqueta = Label(ventana, textvariable=cuerda)
+    cuerdaEtiqueta.pack()
+    frecuenciaEtiqueta = Label(ventana, text="frecuencia actual")
+    frecuenciaEtiqueta.pack()
+    frecEtiqueta = Label(ventana, textvariable=frecuencia)
+    frecEtiqueta.pack()
+    afinarEtiqueta = Label(ventana, textvariable=afinar)
+    afinarEtiqueta.pack()
 
 
 boton = Button(ventana, text="Iniciar", command = iniciar)
