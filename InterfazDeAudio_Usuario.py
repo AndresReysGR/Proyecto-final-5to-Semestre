@@ -1,4 +1,8 @@
 from tkinter import *
+import pyaudio 
+import numpy as np
+import wave
+
 
 ventana = Tk()
 ventana.title("Audio")
@@ -14,14 +18,141 @@ segundaEtiqueta.pack()
 #ingresoTexto.pack()
 
 
+#Formato de audio de microfono
+PROFUNDIDAD_BITS = pyaudio.paInt16
+CANALES = 1 
+FRECUENCIAS_MUESTREO = 44100
+
+SEGUNDOS_GRABACION = 2
+
+#Tamaño de CHUNK
+CHUNK = 2048
+
+window = np.blackman(CHUNK)
+
+
+
+
 
 def iniciar():
-    terceraEtiqueta = Label(ventana, text="etiqueta1")
-    terceraEtiqueta.pack()
-    cuartaEtiqueta = Label(ventana, text="etiqueta2")
-    cuartaEtiqueta.pack()
-    quintaEtiqueta = Label(ventana, text="etiqueta3")
-    quintaEtiqueta.pack()
+
+    def analizar(stream):
+        data = stream.read(CHUNK, exception_on_overflow=False)
+        #"2048h"
+        waveData = wave.struct.unpack("%dh"%(CHUNK), data) 
+        npData = np.array(waveData) 
+
+        dataEntrada = npData * window
+
+        fftData = np.abs(np.fft.rfft(dataEntrada))
+
+        indiceFrecuenciaDominate = fftData[1:].argmax() + 1
+
+        #Cambio de indice a Hz
+
+        y0,y1,y2 = np.log(fftData[indiceFrecuenciaDominate-1: indiceFrecuenciaDominate+2])
+        x1 = (y2 - y0) * 0.5 / (2 * y1 - y2 - y0)
+        fDominante = (indiceFrecuenciaDominate+x1)*FRECUENCIAS_MUESTREO/CHUNK
+
+        print("Frecuencia dominante: " + str(fDominante)+ "Hz", end='\r') 
+        
+        
+
+
+        tolerancia=15
+        rango = 1.3
+        
+
+        if fDominante > 82.4 - tolerancia and fDominante < 82.4 + tolerancia:
+            cuerda= "6ta cuerda tono Mi(e) con una frecuencia de 82.40Hz"
+            if fDominante > 82.4 - rango and fDominante < 82.4 + rango:
+                afinar = "La afinacion es correcta"
+            elif fDominante < 82.4 + rango:
+                afinar = "Es necesario apretar la cuerda"
+            else:
+                afinar = "Es necesario aflojar la cuerda"
+        
+        elif fDominante > 110.00 - tolerancia and fDominante < 110.00 + tolerancia:
+            cuerda= "5ta cuerda tono La(a) con una frecuencia de 110.00"
+            if fDominante > 110.00 - rango and fDominante < 110.00 + rango:
+                afinar = "La afinacion es correcta"
+            elif fDominante < 110.00 + rango:
+                afinar = "Es necesario apretar la cuerda"
+            else:
+                afinar = "Es necesario aflojar la cuerda"
+
+        elif fDominante > 146.83 - tolerancia and fDominante < 146.83 + tolerancia:
+            cuerda= "4ta cuerda tono Re(d) con una frecuencia de 146.83"
+            if fDominante > 146.83 - rango and fDominante < 146.83 + rango:
+                afinar = "La afinacion es correcta"
+            elif fDominante < 146.83 + rango:
+                afinar = "Es necesario apretar la cuerda"
+            else:
+                afinar = "Es necesario aflojar la cuerda"
+
+        elif fDominante > 196.00 - tolerancia and fDominante < 196.00 + tolerancia:
+            cuerda= "3ra cuerda tono Sol(g) con una frecuencia de 196.00"
+            if fDominante > 196.00 - rango and fDominante < 196.00 + rango:
+                afinar = "La afinacion es correcta"
+            elif fDominante < 196.00 + rango:
+                afinar = "Es necesario apretar la cuerda"
+            else:
+                afinar = "Es necesario aflojar la cuerda"       
+
+        elif fDominante > 246.94 - tolerancia and fDominante < 246.94 + tolerancia:
+            cuerda= "2da cuerda tono Si(b) con una frecuencia de 246.94"
+            if fDominante > 246.94 - rango and fDominante < 246.94 + rango:
+                afinar = "La afinacion es correcta"
+            elif fDominante < 246.94 + rango:
+                afinar = "Es necesario apretar la cuerda"
+            else:
+                afinar = "Es necesario aflojar la cuerda"      
+
+        elif fDominante > 329.63 - tolerancia and fDominante < 329.63 + tolerancia:
+            cuerda= "1ra cuerda tono Mi(e) con una frecuencia de 329.63"
+            if fDominante > 329.63 - rango and fDominante < 329.63 + rango:
+                afinar = "La afinacion es correcta"
+            elif fDominante < 329.63 + rango:
+                afinar = "Es necesario apretar la cuerda"
+            else:
+                afinar = "Es necesario aflojar la cuerda"        
+                
+
+    
+       
+    if __name__ == "__main__":
+        p = pyaudio.PyAudio()
+        stream = p.open(format=PROFUNDIDAD_BITS, channels=CANALES,
+        rate=FRECUENCIAS_MUESTREO, input=True, frames_per_buffer=CHUNK)
+
+        for i in range(0, int(FRECUENCIAS_MUESTREO * SEGUNDOS_GRABACION/CHUNK)):
+            analizar(stream)
+
+        stream.stop_stream()
+        stream.close()
+        p.terminate()
+
+
+
+
+    cuerda=StringVar()
+    frecuencia=StringVar()
+    afinar=StringVar()
+
+
+    cuerda.set=(cuerda)
+    frecuencia.set=(frecuencia)
+    afinar.set=(afinar)
+
+
+    cuerdaEtiqueta = Label(ventana, textvariable=cuerda)
+    cuerdaEtiqueta.pack()
+    frecuenciaEtiqueta = Label(ventana, text="frecuencia actual")
+    frecuenciaEtiqueta.pack()
+    frecEtiqueta = Label(ventana, textvariable=frecuencia)
+    frecEtiqueta.pack()
+    afinarEtiqueta = Label(ventana, textvariable=afinar)
+    afinarEtiqueta.pack()
 
 
 boton = Button(ventana, text="Iniciar", command = iniciar)
