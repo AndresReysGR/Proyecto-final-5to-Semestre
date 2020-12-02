@@ -23,7 +23,7 @@ PROFUNDIDAD_BITS = pyaudio.paInt16
 CANALES = 1 
 FRECUENCIAS_MUESTREO = 44100
 
-SEGUNDOS_GRABACION = 1
+SEGUNDOS_GRABACION = 2
 
 #Tamaño de CHUNK
 CHUNK = 2048
@@ -31,10 +31,14 @@ CHUNK = 2048
 window = np.blackman(CHUNK)
 
 
-cuerda=StringVar()
-frecuencia=StringVar()
-afinar=StringVar()
+strcuerda=StringVar()
+strcuerda.set("")
 
+strfrecuencia=StringVar()
+strfrecuencia.set("")
+
+strafinar=StringVar()
+strafinar.set("")
 
 
 def iniciar():
@@ -56,7 +60,7 @@ def iniciar():
         y0,y1,y2 = np.log(fftData[indiceFrecuenciaDominate-1: indiceFrecuenciaDominate+2])
         x1 = (y2 - y0) * 0.5 / (2 * y1 - y2 - y0)
         fDominante = (indiceFrecuenciaDominate+x1)*FRECUENCIAS_MUESTREO/CHUNK
-
+        frecuencia = str(fDominante) 
         print("Frecuencia dominante: " + str(fDominante)+ "Hz", end='\r') 
         
 
@@ -73,7 +77,6 @@ def iniciar():
                 afinar = "Es necesario apretar la cuerda"
             else:
                 afinar = "Es necesario aflojar la cuerda"
-        
         elif fDominante > 110.00 - tolerancia and fDominante < 110.00 + tolerancia:
             cuerda= "5ta cuerda tono La(a) con una frecuencia de 110.00"
             if fDominante > 110.00 - rango and fDominante < 110.00 + rango:
@@ -82,7 +85,6 @@ def iniciar():
                 afinar = "Es necesario apretar la cuerda"
             else:
                 afinar = "Es necesario aflojar la cuerda"
-
         elif fDominante > 146.83 - tolerancia and fDominante < 146.83 + tolerancia:
             cuerda= "4ta cuerda tono Re(d) con una frecuencia de 146.83"
             if fDominante > 146.83 - rango and fDominante < 146.83 + rango:
@@ -91,7 +93,6 @@ def iniciar():
                 afinar = "Es necesario apretar la cuerda"
             else:
                 afinar = "Es necesario aflojar la cuerda"
-
         elif fDominante > 196.00 - tolerancia and fDominante < 196.00 + tolerancia:
             cuerda= "3ra cuerda tono Sol(g) con una frecuencia de 196.00"
             if fDominante > 196.00 - rango and fDominante < 196.00 + rango:
@@ -100,7 +101,6 @@ def iniciar():
                 afinar = "Es necesario apretar la cuerda"
             else:
                 afinar = "Es necesario aflojar la cuerda"       
-
         elif fDominante > 246.94 - tolerancia and fDominante < 246.94 + tolerancia:
             cuerda= "2da cuerda tono Si(b) con una frecuencia de 246.94"
             if fDominante > 246.94 - rango and fDominante < 246.94 + rango:
@@ -108,8 +108,7 @@ def iniciar():
             elif fDominante < 246.94 + rango:
                 afinar = "Es necesario apretar la cuerda"
             else:
-                afinar = "Es necesario aflojar la cuerda"      
-
+                afinar = "Es necesario aflojar la cuerda"   
         elif fDominante > 329.63 - tolerancia and fDominante < 329.63 + tolerancia:
             cuerda= "1ra cuerda tono Mi(e) con una frecuencia de 329.63"
             if fDominante > 329.63 - rango and fDominante < 329.63 + rango:
@@ -117,14 +116,13 @@ def iniciar():
             elif fDominante < 329.63 + rango:
                 afinar = "Es necesario apretar la cuerda"
             else:
-                afinar = "Es necesario aflojar la cuerda"        
-                
+                afinar = "Es necesario aflojar la cuerda"         
         else:
             cuerda = "no se escucha correctamente"
-            
-        
-        
-    
+
+        strcuerda.set(cuerda)
+        strfrecuencia.set(frecuencia)
+        strafinar.set(afinar)
        
     if __name__ == "__main__":
         p = pyaudio.PyAudio()
@@ -139,24 +137,19 @@ def iniciar():
         p.terminate()
 
 
-
-
-    cuerda.set=(cuerda)
-    frecuencia.set=(frecuencia)
-    afinar.set=(afinar)
-
-
-    cuerdaEtiqueta = Label(ventana, textvariable=cuerda)
-    cuerdaEtiqueta.pack()
-    frecuenciaEtiqueta = Label(ventana, text="frecuencia actual")
-    frecuenciaEtiqueta.pack()
-    frecEtiqueta = Label(ventana, textvariable=frecuencia)
-    frecEtiqueta.pack()
-    afinarEtiqueta = Label(ventana, textvariable=afinar)
-    afinarEtiqueta.pack()
-
-
 boton = Button(ventana, text="Iniciar", command = iniciar)
 boton.pack()
+
+cuerdaEtiqueta = Label(ventana, textvariable=strcuerda)
+cuerdaEtiqueta.pack()
+
+frecuenciaEtiqueta = Label(ventana, text="frecuencia actual")
+frecuenciaEtiqueta.pack()
+
+frecEtiqueta = Label(ventana, textvariable=strfrecuencia)
+frecEtiqueta.pack()
+
+afinarEtiqueta = Label(ventana, textvariable=strafinar)
+afinarEtiqueta.pack()
 
 ventana.mainloop()
