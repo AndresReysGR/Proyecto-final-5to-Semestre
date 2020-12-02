@@ -23,7 +23,7 @@ PROFUNDIDAD_BITS = pyaudio.paInt16
 CANALES = 1 
 FRECUENCIAS_MUESTREO = 44100
 
-SEGUNDOS_GRABACION = 2
+SEGUNDOS_GRABACION = 1
 
 #Tamaño de CHUNK
 CHUNK = 2048
@@ -31,6 +31,9 @@ CHUNK = 2048
 window = np.blackman(CHUNK)
 
 
+cuerda=StringVar()
+frecuencia=StringVar()
+afinar=StringVar()
 
 
 
@@ -56,7 +59,7 @@ def iniciar():
 
         print("Frecuencia dominante: " + str(fDominante)+ "Hz", end='\r') 
         
-        
+    
 
 
         tolerancia=15
@@ -117,7 +120,11 @@ def iniciar():
             else:
                 afinar = "Es necesario aflojar la cuerda"        
                 
-
+        else:
+            cuerda = "no se escucha correctamente"
+            
+        
+        
     
        
     if __name__ == "__main__":
@@ -133,11 +140,6 @@ def iniciar():
         p.terminate()
 
 
-
-
-    cuerda=StringVar()
-    frecuencia=StringVar()
-    afinar=StringVar()
 
 
     cuerda.set=(cuerda)
